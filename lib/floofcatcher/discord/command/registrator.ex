@@ -2,8 +2,10 @@ defmodule Floofcatcher.Discord.Command.Registrator do
   alias Nosedrum.Storage.ETS, as: CommandStorage
   require Logger
 
+  alias Floofcatcher.Discord.Command
   @commands %{
-    "test" => Floofcatcher.Discord.Command.TestCommand
+    "test" => Command.TestCommand,
+    "join" => Command.JoinEvent
   }
 
   @spec register_all :: :ok
