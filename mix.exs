@@ -51,7 +51,11 @@ defmodule Floofcatcher.MixProject do
 
       # Discord
       {:nostrum, "~> 0.4.6"},
-      {:nosedrum, "~> 0.3.0"}
+      {:nosedrum, "~> 0.3.0"},
+
+      # HTTP Requests
+      {:httpoison, "~> 1.8"},
+      {:floki, "~> 0.30.1"}
     ]
   end
 
