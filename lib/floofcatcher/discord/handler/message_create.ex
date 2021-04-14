@@ -11,8 +11,10 @@ defmodule Floofcatcher.Discord.Handler.MessageCreate do
         Api.create_message(msg.channel_id, "Unknown command :(")
       {:error, :predicate, {:error, reason}} ->
         Api.create_message(msg.channel_id, "Error: #{reason}")
-      _ ->
+      :ignored ->
         :ok
+      _ ->
+        Api.delete_message(msg)
     end
   end
 
