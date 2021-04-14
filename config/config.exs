@@ -10,6 +10,9 @@ use Mix.Config
 config :nostrum,
   token: ""
 
+config :nosedrum,
+  prefix: "/"
+
 config :floofcatcher,
   ecto_repos: [Floofcatcher.Repo]
 

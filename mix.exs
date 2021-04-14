@@ -50,8 +50,8 @@ defmodule Floofcatcher.MixProject do
       {:cowlib, "~> 2.9.1", override: true},
 
       # Discord
-      {:nostrum, "~> 0.4.6"}
-
+      {:nostrum, "~> 0.4.6"},
+      {:nosedrum, "~> 0.3.0"}
     ]
   end
 

@@ -17,7 +17,7 @@ defmodule Floofcatcher.Application do
       FloofcatcherWeb.Endpoint,
       # Start a worker by calling: Floofcatcher.Worker.start_link(arg)
       # {Floofcatcher.Worker, arg}
-
+      Nosedrum.Storage.ETS,
       Floofcatcher.Discord
     ]
 
