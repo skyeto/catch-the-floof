@@ -6,6 +6,7 @@ defmodule Floofcatcher.Discord.Command.Registrator do
     "test" => Floofcatcher.Discord.Command.TestCommand
   }
 
+  @spec register_all :: :ok
   def register_all() do
     Enum.each(@commands, &register_command/1)
   end
