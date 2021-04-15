@@ -1,8 +1,9 @@
 defmodule Floofcatcher.Discord.Command.VerifyTeam do
   @moduledoc """
   Command to verify ownership of CTFtime team. Necessary
-  for multi-server deployment of the bot where we want
-  to control access to team-specific information.
+  for multi-server with support for multi-channel
+  deployment of the bot where we want to control access
+  to team-specific information.
 
   Flow:
   >> /verify start

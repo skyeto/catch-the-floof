@@ -9,3 +9,5 @@ Discord bot to handle menial CTF tasks such as creating channels, tracking chall
 2. `mix ecto.create`
 3. `mix ecto.migrate`
 4. `mix phx.server` 
+
+Inviting the bot to a server is as easy as going to `http://localhost/discord/add`

@@ -8,7 +8,8 @@ defmodule Floofcatcher.Discord do
   alias Nostrum.Api
   alias Floofcatcher.Discord.Command
   alias Floofcatcher.Discord.Handler.{
-    MessageCreate
+    MessageCreate,
+    Ready
   }
 
   def start_link do
@@ -17,6 +18,7 @@ defmodule Floofcatcher.Discord do
 
   def handle_event({:READY, _data, _ws_state}) do
     Command.Registrator.register_all()
+    Ready.handle()
   end
 
   def handle_event({:MESSAGE_CREATE, msg, _ws_state}) do
