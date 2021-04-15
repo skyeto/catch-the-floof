@@ -55,7 +55,10 @@ defmodule Floofcatcher.MixProject do
 
       # HTTP Requests
       {:httpoison, "~> 1.8"},
-      {:floki, "~> 0.30.1"}
+      {:floki, "~> 0.30.1"},
+
+      # Helpers
+      {:exceptional, "~> 2.1"}
     ]
   end
 
