@@ -8,6 +8,7 @@ defmodule Floofcatcher.Discord.Command.TestCommand do
   def predicates, do: []
 
   def command(msg, []) do
+    IO.inspect(Floofcatcher.Ctftime.Api.get_team("151655"))
     {:ok, _msg} = Api.create_message(msg.channel_id, "Hello from Floofcatcher ;)")
   end
 

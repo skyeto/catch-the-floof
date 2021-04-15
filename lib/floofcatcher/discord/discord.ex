@@ -1,4 +1,7 @@
 defmodule Floofcatcher.Discord do
+  @moduledoc """
+  Discord service, handles incoming events
+  """
   use Nostrum.Consumer
   require Logger
 
