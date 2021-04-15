@@ -5,7 +5,8 @@ defmodule Floofcatcher.Discord.Command.Registrator do
   alias Floofcatcher.Discord.Command
   @commands %{
     "test" => Command.TestCommand,
-    "join" => Command.JoinEvent
+    "join" => Command.JoinEvent,
+    "verify" => Command.VerifyTeam
   }
 
   @spec register_all :: :ok
