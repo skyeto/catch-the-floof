@@ -6,6 +6,8 @@ defmodule Floofcatcher.DiscordGuildVerification do
     field :code, :string
     field :used, :boolean, default: false
 
+    belongs_to :discord_guild, Floofcatcher.DiscordGuild
+
     timestamps()
   end
 

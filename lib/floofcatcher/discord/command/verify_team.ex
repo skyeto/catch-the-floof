@@ -37,6 +37,7 @@ defmodule Floofcatcher.Discord.Command.VerifyTeam do
 
   def command(msg, ["start", team]) do
     # TODO: Start verification
+    Floofcatcher.Discord.Helper.GuildVerification.begin_verification(msg.guild_id, team)
     {:ok, _msg} = Api.create_message(msg.channel_id, "Add the following to your team description on CTFtime: `Floocatcher: <code>`")
   end
 

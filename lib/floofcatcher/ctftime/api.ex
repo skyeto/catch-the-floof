@@ -10,14 +10,18 @@ defmodule Floofcatcher.Ctftime.Api do
     # TODO: We can't use the API endpoint since it doesn't return
     # the description. :(
     with  {:ok, body} <- get_request(@ctftime, ["team", id]),
-          {:ok, doc} <- Floki.parse_document(body) do
-      %Floofcatcher.Ctftime.Team{
-        id: id,
+          {:ok, doc} <- Floki.parse_document(body)
+    do
+      # TODO: Set academic
+      {:ok, %Floofcatcher.Ctftime.Team{
+        id: String.to_integer(id),
         name: Floofcatcher.Ctftime.Team.name_from_html(doc),
         country: Floofcatcher.Ctftime.Team.country_from_html(doc),
         description: Floofcatcher.Ctftime.Team.description_from_html(doc),
         logo: Floofcatcher.Ctftime.Team.logo_from_html(doc)
-      }
+      }}
+    else
+      _ -> {:error, "team not found"}
     end
   end
 
