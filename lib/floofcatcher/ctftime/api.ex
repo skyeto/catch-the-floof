@@ -1,6 +1,7 @@
 defmodule Floofcatcher.Ctftime.Api do
   @ctftime "https://ctftime.org"
   @ctftime_api @ctftime <> "/api/v1/"
+
   def get_event(id) do
     raise "Not implemented"
   end
@@ -11,10 +12,16 @@ defmodule Floofcatcher.Ctftime.Api do
     with  {:ok, body} <- get_request(@ctftime, ["team", id]),
           {:ok, doc} <- Floki.parse_document(body) do
       %Floofcatcher.Ctftime.Team{
-        name: Floofcatcher.Ctftime.Team.name_from_html(doc)
+        id: id,
+        name: Floofcatcher.Ctftime.Team.name_from_html(doc),
+        country: Floofcatcher.Ctftime.Team.country_from_html(doc),
+        description: Floofcatcher.Ctftime.Team.description_from_html(doc),
+        logo: Floofcatcher.Ctftime.Team.logo_from_html(doc)
       }
     end
   end
+
+  def url, do: @ctftime
 
   defp get_request(endpoint, args) do
     result = build_url(endpoint, args) |> HTTPoison.get
