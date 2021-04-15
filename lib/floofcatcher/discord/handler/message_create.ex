@@ -17,8 +17,4 @@ defmodule Floofcatcher.Discord.Handler.MessageCreate do
         Api.delete_message(msg)
     end
   end
-
-  def handle(_msg) do
-    :ok
-  end
 end

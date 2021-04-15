@@ -5,19 +5,38 @@ defmodule Floofcatcher.Discord.Helper.GuildInitialization do
   """
   require Logger
   alias Floofcatcher.Repo
+  import Nostrum.Struct.Embed
   use Exceptional.Value
   use Exceptional.TaggedStatus, only: :operators
 
+  @verification_title "⚠ CTFtime team verification ⚠"
+  @verification_color 16734464
+  @verification_descr """
+  Before you can use the hosted version of *Floofcatcher* you must \
+  verify your team on CTFtime. Since we don't yet have access to \
+  the OAuth2 provider the verification is a bit more involved but \
+  still super quick!
+
+  **How?**
+  >> Send `/verify start [team id]` in this channel
+  >> Add the code returned by the command to your team description
+  >> Send `/verify check` in this channel.
+  """
+
   def initialize(guild_id) do
-    case Repo.get_by(Floofcatcher.DiscordGuild, id: Integer.to_string(guild_id)) do
-      repo = %Floofcatcher.DiscordGuild{} -> IO.puts("Success!")
+    guild_get_or_create(guild_id)
+    ~> create_roles()
+    ~> create_channels()
+    |> set_initialized()
+  end
+
+  defp guild_get_or_create(guild_id) do
+    case Repo.get_by(Floofcatcher.DiscordGuild, snowflake: Integer.to_string(guild_id)) do
+      guild_db = %Floofcatcher.DiscordGuild{} ->
+        %{id: guild_id, db: guild_db}
       nil ->
         %{id: guild_id}
         |> create_new_guild()
-        ~> create_roles()
-        ~> create_channels()
-        |> set_initialized()
-      _ -> IO.puts("Unexpected result")
     end
   end
 
@@ -53,7 +72,15 @@ defmodule Floofcatcher.Discord.Helper.GuildInitialization do
   end
 
   defp send_introduction(guild) do
-    _message = Nostrum.Api.create_message!(guild.channel.id, "init message owo")
+    if guild.db.verified == false do
+      embed =
+        %Nostrum.Struct.Embed{}
+        |> put_title(@verification_title)
+        |> put_description(@verification_descr)
+        |> put_color(@verification_color)
+      Nostrum.Api.create_message!(guild.channel.id, embed: embed)
+    end
+
     guild
   end
 
