@@ -1,10 +1,8 @@
 defmodule Floofcatcher.Ctftime.Api do
   @ctftime "https://ctftime.org"
-  @ctftime_api @ctftime <> "/api/v1/"
+  @ctftime_api @ctftime <> "/api/v1"
 
-  def get_event(id) do
-    raise "Not implemented"
-  end
+  require Logger
 
   def get_team(id) do
     # TODO: We can't use the API endpoint since it doesn't return
@@ -26,13 +24,27 @@ defmodule Floofcatcher.Ctftime.Api do
   end
 
   def get_event(id) do
-    with  {:ok, body} <- get_request(@ctftime_api, ["event", id]),
+    with  {:ok, body} <- get_request(@ctftime_api, ["events", id, ""]),
           {:ok, event} <- Jason.decode(body)
     do
+      IO.inspect(body)
+      IO.inspect(event)
       {:ok, %Floofcatcher.Ctftime.Event{
         ctf_id: event["id"],
-        title: event["title"] # TODO: ctftime went down whilst writing this
+        title: event["title"],
+        url: event["url"],
+        restrictions: event["restrictions"],
+        format: event["format"],
+        ctftime_url: event["ctftime_url"],
+        onsite: event["onsite"],
+        location: event["location"],
+        start: event["start"],
+        duration: event["duration"],
+        weight: event["weight"]
       }}
+    else
+      {:error, reason} -> IO.inspect(reason)
+      error -> IO.inspect(error)
     end
 
   end
@@ -40,7 +52,9 @@ defmodule Floofcatcher.Ctftime.Api do
   def url, do: @ctftime
 
   defp get_request(endpoint, args) do
+    Logger.info("sent request to ctftime: " <> build_url(endpoint, args))
     result = build_url(endpoint, args) |> HTTPoison.get
+    IO.inspect(result)
     case result do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         {:ok, body}
