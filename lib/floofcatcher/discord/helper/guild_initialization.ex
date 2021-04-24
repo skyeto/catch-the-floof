@@ -35,8 +35,7 @@ defmodule Floofcatcher.Discord.Helper.GuildInitialization do
       guild_db = %Floofcatcher.DiscordGuild{} ->
         %{id: guild_id, db: guild_db}
       nil ->
-        %{id: guild_id}
-        |> create_new_guild()
+        create_new_guild(%{id: guild_id})
     end
   end
 
@@ -87,6 +86,7 @@ defmodule Floofcatcher.Discord.Helper.GuildInitialization do
   defp set_initialized(guild) do
     case ~~~guild do
       {:ok, _} ->
+        # TODO: Add guild initialized flag?
         Logger.info("Successfully initialized guild #{guild.id}")
       {:error, reason} ->
         # TODO: Better error handling

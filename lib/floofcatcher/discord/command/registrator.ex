@@ -7,7 +7,8 @@ defmodule Floofcatcher.Discord.Command.Registrator do
     "test" => Command.TestCommand,
     "join" => Command.JoinEvent,
     "verify" => Command.VerifyTeam,
-    "team" => Command.TeamInfo
+    "team" => Command.TeamInfo,
+    "help" => Command.Help
   }
 
   @spec register_all :: :ok

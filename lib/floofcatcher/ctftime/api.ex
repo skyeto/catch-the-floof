@@ -25,6 +25,18 @@ defmodule Floofcatcher.Ctftime.Api do
     end
   end
 
+  def get_event(id) do
+    with  {:ok, body} <- get_request(@ctftime_api, [event, id]),
+          {:ok, event} <- Jason.decode(body)
+    do
+      {:ok, %Floofcatcher.Ctftime.Event{
+        ctf_id: event["id"],
+        title: event["title"] # TODO: ctftime went down whilst writing this
+      }}
+    end
+
+  end
+
   def url, do: @ctftime
 
   defp get_request(endpoint, args) do

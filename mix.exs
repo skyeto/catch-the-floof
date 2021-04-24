@@ -57,6 +57,9 @@ defmodule Floofcatcher.MixProject do
       {:httpoison, "~> 1.8"},
       {:floki, "~> 0.30.1"},
 
+      # GraphQL (for CTFNote)
+      {:neuron, "~> 5.0"},
+
       # Helpers
       {:exceptional, "~> 2.1"}
     ]
