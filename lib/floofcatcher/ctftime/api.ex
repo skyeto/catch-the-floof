@@ -26,6 +26,7 @@ defmodule Floofcatcher.Ctftime.Api do
     end
   end
 
+  @spec get_event(any) :: {:error, <<_::120>>} | {:ok, Floofcatcher.Ctftime.Event.t()}
   def get_event(id) do
     with  {:ok, body} <- get_request(@ctftime_api, ["events", id, ""]),
           {:ok, event} <- Jason.decode(body)
