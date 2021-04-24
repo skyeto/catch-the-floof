@@ -5,18 +5,29 @@ defmodule Floofcatcher.Discord.Helper.GuildVerification do
   alias Floofcatcher.Repo
 
   def begin_verification(guild_id, team_id) do
-    with  {:ok, team} <- get_team(team_id),
+    with  {:ok, team} <- get_or_create_team(team_id),
           {:ok, guild} <- get_guild(guild_id),
           :ok <- check_team_guild(guild, team),
           {:ok, code} <- get_or_create_verification_code(guild)
     do
-      IO.inspect(team)
-      IO.inspect(code)
-      team
+      {:ok, team, code}
     else
       err ->
         IO.puts("Something went wrong during guild / team verification")
         IO.inspect(err)
+        {:error, "failed verification"}
+        # TODO: Error checking
+    end
+  end
+
+  @spec check_verification(integer) :: {:ok, %Floofcatcher.Team{}} | {:error, String.t()}
+  def check_verification(guild_id) do
+    with  {:ok, guild} <- get_guild(guild_id),
+          {:ok, team} <- update_team(guild.team.remote_id)
+    do
+      {:error, "woops"}
+    else
+      _ -> {:error, "verification failed"}
     end
   end
 
@@ -40,8 +51,9 @@ defmodule Floofcatcher.Discord.Helper.GuildVerification do
     end
   end
 
+  @spec get_guild(integer) :: {:ok, Floofcatcher.DiscordGuild.__struct__} | {:error, String.t()}
   defp get_guild(guild_id) do
-    case Repo.get_by(Floofcatcher.DiscordGuild, snowflake: Integer.to_string(guild_id)) do
+    case Repo.get_by(Floofcatcher.DiscordGuild, snowflake: Integer.to_string(guild_id)) |> Repo.preload(:team) do
       guild = %Floofcatcher.DiscordGuild{} ->
         {:ok, guild}
       nil ->
@@ -54,22 +66,33 @@ defmodule Floofcatcher.Discord.Helper.GuildVerification do
       true ->
         :ok
       false ->
-        case guild.team_id do
-          nil ->
-            :ok #TODO: Set team_id to team
-          _ ->
+        case is_nil(guild.team_id) do
+          true ->
+            IO.inspect(guild)
+            IO.inspect(team)
+            Floofcatcher.DiscordGuild.changeset(guild, %{})
+            |> Ecto.Changeset.put_assoc(:team, team)
+            |> Repo.update!()
+            :ok
+          false ->
             {:error, "Channel already belongs to another team, you aren't cheating right?"}
         end
     end
   end
 
-  defp get_team(team_id) do
+  defp get_or_create_team(team_id) do
     case Repo.get_by(Floofcatcher.Team, remote_id: team_id) do
       team = %Floofcatcher.Team{} ->
         {:ok, team}
       nil ->
         create_team(team_id)
     end
+  end
+
+  @spec update_team(integer) :: {:ok, Floofcatcher.Team.__struct__} | {:error, String.t()}
+  defp update_team(team_id) do
+    IO.inspect(team_id)
+    {:error, "not implemented"}
   end
 
   defp create_team(team_id) do

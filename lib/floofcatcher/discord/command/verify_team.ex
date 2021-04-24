@@ -25,6 +25,7 @@ defmodule Floofcatcher.Discord.Command.VerifyTeam do
   @behaviour Nosedrum.Command
 
   alias Nostrum.Api
+  alias Floofcatcher.Discord.Helper.GuildVerification
 
   def usage, do: ["verify <start|check> [team id]"]
   def description, do: "Verify that you control the CTFtime team"
@@ -37,8 +38,8 @@ defmodule Floofcatcher.Discord.Command.VerifyTeam do
 
   def command(msg, ["start", team]) do
     # TODO: Start verification
-    Floofcatcher.Discord.Helper.GuildVerification.begin_verification(msg.guild_id, team)
-    {:ok, _msg} = Api.create_message(msg.channel_id, "Add the following to your team description on CTFtime: `Floocatcher: <code>`")
+    {:ok, _team, code} = GuildVerification.begin_verification(msg.guild_id, team)
+    {:ok, _msg} = Api.create_message(msg.channel_id, "Add the following to your team description on CTFtime: `Floofcatcher: #{code}`")
   end
 
   def command(msg, ["start"]) do
@@ -46,6 +47,7 @@ defmodule Floofcatcher.Discord.Command.VerifyTeam do
   end
 
   def command(msg, ["check"]) do
+    GuildVerification.check_verification(msg.guild_id)
     {:ok, _msg} = Api.create_message(msg.channel_id, "#TODO: Check")
   end
 

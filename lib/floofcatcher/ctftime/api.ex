@@ -26,13 +26,10 @@ defmodule Floofcatcher.Ctftime.Api do
     end
   end
 
-  @spec get_event(any) :: {:error, <<_::120>>} | {:ok, Floofcatcher.Ctftime.Event.t()}
   def get_event(id) do
     with  {:ok, body} <- get_request(@ctftime_api, ["events", id, ""]),
           {:ok, event} <- Jason.decode(body)
     do
-      IO.inspect(body)
-      IO.inspect(event)
       {:ok, %Floofcatcher.Ctftime.Event{
         ctf_id: event["id"],
         title: event["title"],
@@ -49,12 +46,12 @@ defmodule Floofcatcher.Ctftime.Api do
     else
       _ -> {:error, "event not found"} # TODO: Error checking (e.g. 500 from ctftime)
     end
-
   end
 
   def url, do: @ctftime
 
   defp get_request(endpoint, args) do
+    Logger.info("sent request to ctftime #{build_url(endpoint, args)}")
     result = build_url(endpoint, args) |> HTTPoison.get
     case result do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
