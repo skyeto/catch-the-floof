@@ -5,6 +5,7 @@ defmodule Floofcatcher.Discord.Helper.GuildInitialization do
   """
   require Logger
   alias Floofcatcher.Repo
+  alias Floofcatcher.DiscordGuild
   import Nostrum.Struct.Embed
   use Exceptional.Value
   use Exceptional.TaggedStatus, only: :operators
@@ -31,8 +32,8 @@ defmodule Floofcatcher.Discord.Helper.GuildInitialization do
   end
 
   defp guild_get_or_create(guild_id) do
-    case Repo.get_by(Floofcatcher.DiscordGuild, snowflake: Integer.to_string(guild_id)) do
-      guild_db = %Floofcatcher.DiscordGuild{} ->
+    case Repo.get_by(DiscordGuild, snowflake: Integer.to_string(guild_id)) do
+      guild_db = %DiscordGuild{} ->
         %{id: guild_id, db: guild_db}
       nil ->
         create_new_guild(%{id: guild_id})
@@ -40,7 +41,7 @@ defmodule Floofcatcher.Discord.Helper.GuildInitialization do
   end
 
   defp create_new_guild(guild) do
-    case Repo.insert(%Floofcatcher.DiscordGuild{snowflake: Integer.to_string(guild.id), verified: false}) do
+    case Repo.insert(%DiscordGuild{snowflake: Integer.to_string(guild.id), verified: false}) do
       {:ok, guild_db} ->
         Map.put(guild, :db, guild_db)
       {:error, _changeset} ->

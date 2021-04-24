@@ -3,9 +3,7 @@ defmodule Floofcatcher.Ctftime.Api do
   @ctftime_api @ctftime <> "/api/v1"
 
   require Logger
-  alias Floofcatcher.Ctftime.{
-
-  }
+  alias Floofcatcher.Ctftime
 
   def get_team(id) do
     # TODO: We can't use the API endpoint since it doesn't return
@@ -16,10 +14,10 @@ defmodule Floofcatcher.Ctftime.Api do
       # TODO: Set academic
       {:ok, %Floofcatcher.Ctftime.Team{
         id: String.to_integer(id),
-        name: Floofcatcher.Ctftime.Team.name_from_html(doc),
-        country: Floofcatcher.Ctftime.Team.country_from_html(doc),
-        description: Floofcatcher.Ctftime.Team.description_from_html(doc),
-        logo: Floofcatcher.Ctftime.Team.logo_from_html(doc)
+        name: Ctftime.Team.name_from_html(doc),
+        country: Ctftime.Team.country_from_html(doc),
+        description: Ctftime.Team.description_from_html(doc),
+        logo: Ctftime.Team.logo_from_html(doc)
       }}
     else
       _ -> {:error, "team not found"} # TODO: Error checking (e.g. 500 from ctftime)
@@ -30,7 +28,7 @@ defmodule Floofcatcher.Ctftime.Api do
     with  {:ok, body} <- get_request(@ctftime_api, ["events", id, ""]),
           {:ok, event} <- Jason.decode(body)
     do
-      {:ok, %Floofcatcher.Ctftime.Event{
+      {:ok, %Ctftime.Event{
         ctf_id: event["id"],
         title: event["title"],
         url: event["url"],

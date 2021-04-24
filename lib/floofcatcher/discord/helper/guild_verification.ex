@@ -2,7 +2,12 @@ defmodule Floofcatcher.Discord.Helper.GuildVerification do
   @doc """
   Returns verification code
   """
-  alias Floofcatcher.Repo
+  alias Floofcatcher.{
+    Repo,
+    DiscordGuild,
+    DiscordGuildVerification,
+    Team
+  }
 
   def begin_verification(guild_id, team_id) do
     with  {:ok, team} <- get_or_create_team(team_id),
@@ -20,7 +25,7 @@ defmodule Floofcatcher.Discord.Helper.GuildVerification do
     end
   end
 
-  @spec check_verification(integer) :: {:ok, %Floofcatcher.Team{}} | {:error, String.t()}
+  @spec check_verification(integer) :: {:ok, %Team{}} | {:error, String.t()}
   def check_verification(guild_id) do
     with  {:ok, guild} <- get_guild(guild_id),
           {:ok, team} <- update_team(guild.team.remote_id)
@@ -32,8 +37,8 @@ defmodule Floofcatcher.Discord.Helper.GuildVerification do
   end
 
   defp get_or_create_verification_code(guild) do
-    case Repo.get_by(Floofcatcher.DiscordGuildVerification, discord_guild_id: guild.id) do
-      %Floofcatcher.DiscordGuildVerification{code: code} ->
+    case Repo.get_by(DiscordGuildVerification, discord_guild_id: guild.id) do
+      %DiscordGuildVerification{code: code} ->
         {:ok, code}
       nil ->
         create_verification_code(guild)
@@ -43,7 +48,7 @@ defmodule Floofcatcher.Discord.Helper.GuildVerification do
   defp create_verification_code(guild) do
     code = Ecto.UUID.generate()
 
-    case Repo.insert(%Floofcatcher.DiscordGuildVerification{discord_guild_id: guild.id, code: code}) do
+    case Repo.insert(%DiscordGuildVerification{discord_guild_id: guild.id, code: code}) do
       {:ok, _} ->
         {:ok, code}
       _ ->
@@ -51,10 +56,10 @@ defmodule Floofcatcher.Discord.Helper.GuildVerification do
     end
   end
 
-  @spec get_guild(integer) :: {:ok, Floofcatcher.DiscordGuild.__struct__} | {:error, String.t()}
+  @spec get_guild(integer) :: {:ok, DiscordGuild.__struct__} | {:error, String.t()}
   defp get_guild(guild_id) do
-    case Repo.get_by(Floofcatcher.DiscordGuild, snowflake: Integer.to_string(guild_id)) |> Repo.preload(:team) do
-      guild = %Floofcatcher.DiscordGuild{} ->
+    case Repo.get_by(DiscordGuild, snowflake: Integer.to_string(guild_id)) |> Repo.preload(:team) do
+      guild = %DiscordGuild{} ->
         {:ok, guild}
       nil ->
         {:error, "Could not find guild"}
@@ -70,7 +75,7 @@ defmodule Floofcatcher.Discord.Helper.GuildVerification do
           true ->
             IO.inspect(guild)
             IO.inspect(team)
-            Floofcatcher.DiscordGuild.changeset(guild, %{})
+            DiscordGuild.changeset(guild, %{})
             |> Ecto.Changeset.put_assoc(:team, team)
             |> Repo.update!()
             :ok
@@ -81,15 +86,15 @@ defmodule Floofcatcher.Discord.Helper.GuildVerification do
   end
 
   defp get_or_create_team(team_id) do
-    case Repo.get_by(Floofcatcher.Team, remote_id: team_id) do
-      team = %Floofcatcher.Team{} ->
+    case Repo.get_by(Team, remote_id: team_id) do
+      team = %Team{} ->
         {:ok, team}
       nil ->
         create_team(team_id)
     end
   end
 
-  @spec update_team(integer) :: {:ok, Floofcatcher.Team.__struct__} | {:error, String.t()}
+  @spec update_team(integer) :: {:ok, Team.__struct__} | {:error, String.t()}
   defp update_team(team_id) do
     IO.inspect(team_id)
     {:error, "not implemented"}
@@ -97,7 +102,7 @@ defmodule Floofcatcher.Discord.Helper.GuildVerification do
 
   defp create_team(team_id) do
     with  {:ok, team} <- Floofcatcher.Ctftime.Api.get_team(team_id),
-          {:ok, team_db} <- Repo.insert(%Floofcatcher.Team{
+          {:ok, team_db} <- Repo.insert(%Team{
             remote_id: team.id,
             name: team.name,
             logo: team.logo,
