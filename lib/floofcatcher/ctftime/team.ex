@@ -8,12 +8,14 @@ defmodule Floofcatcher.Ctftime.Team do
     :logo
   ]
 
-  @type id :: integer
-  @type name :: String.t()
-  @type description :: String.t() | nil
-  @type country :: String.t() | nil
-  @type academic :: boolean
-  @type logo :: String.t() | nil
+  @type t :: %__MODULE__{
+    id: integer,
+    name: String.t(),
+    description: String.t() | nil,
+    country: String.t() | nil,
+    academic: boolean,
+    logo: String.t() | nil
+  }
 
   # {"img", [{"src", "/static/images/f/se.png"}, {"alt", "SE"}], []},
 

@@ -3,6 +3,9 @@ defmodule Floofcatcher.Ctftime.Api do
   @ctftime_api @ctftime <> "/api/v1"
 
   require Logger
+  alias Floofcatcher.Ctftime.{
+
+  }
 
   def get_team(id) do
     # TODO: We can't use the API endpoint since it doesn't return
