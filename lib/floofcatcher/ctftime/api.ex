@@ -19,7 +19,7 @@ defmodule Floofcatcher.Ctftime.Api do
         logo: Floofcatcher.Ctftime.Team.logo_from_html(doc)
       }}
     else
-      _ -> {:error, "team not found"}
+      _ -> {:error, "team not found"} # TODO: Error checking (e.g. 500 from ctftime)
     end
   end
 
@@ -43,8 +43,7 @@ defmodule Floofcatcher.Ctftime.Api do
         weight: event["weight"]
       }}
     else
-      {:error, reason} -> IO.inspect(reason)
-      error -> IO.inspect(error)
+      _ -> {:error, "event not found"} # TODO: Error checking (e.g. 500 from ctftime)
     end
 
   end
@@ -52,9 +51,7 @@ defmodule Floofcatcher.Ctftime.Api do
   def url, do: @ctftime
 
   defp get_request(endpoint, args) do
-    Logger.info("sent request to ctftime: " <> build_url(endpoint, args))
     result = build_url(endpoint, args) |> HTTPoison.get
-    IO.inspect(result)
     case result do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         {:ok, body}
