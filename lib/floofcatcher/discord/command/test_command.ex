@@ -1,5 +1,6 @@
 defmodule Floofcatcher.Discord.Command.TestCommand do
   @behaviour Nosedrum.Command
+  @behaviour Floofcatcher.Discord.Command
 
   alias Nostrum.Api
 

@@ -23,6 +23,7 @@ defmodule Floofcatcher.Discord.Command.VerifyTeam do
   >> Maybe in the future. :3
   """
   @behaviour Nosedrum.Command
+  @behaviour Floofcatcher.Discord.Command
 
   alias Nostrum.Api
   alias Floofcatcher.Discord.Helper.GuildVerification

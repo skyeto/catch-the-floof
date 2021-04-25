@@ -16,6 +16,7 @@ defmodule Floofcatcher.Discord.Command.Registrator do
     Enum.each(@commands, &register_command/1)
   end
 
+  @spec register_command({String.t(), Floofcatcher.Discord.Command}) :: :ok
   defp register_command({name, module}) do
     Logger.debug("Registering command: " <> name)
     module.register()

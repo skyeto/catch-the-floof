@@ -1,5 +1,6 @@
 defmodule Floofcatcher.Discord.Command.JoinEvent do
   @behaviour Nosedrum.Command
+  @behaviour Floofcatcher.Discord.Command
 
   alias Nostrum.Api
   import Nostrum.Struct.Embed
