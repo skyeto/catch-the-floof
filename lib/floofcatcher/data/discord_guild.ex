@@ -7,6 +7,7 @@ defmodule Floofcatcher.DiscordGuild do
     field :verified, :boolean, default: false
 
     belongs_to :team, Floofcatcher.Team
+    has_one :discord_guild_verification, Floofcatcher.DiscordGuildVerification
 
     timestamps()
   end

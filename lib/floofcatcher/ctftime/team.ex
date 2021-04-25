@@ -32,6 +32,7 @@ defmodule Floofcatcher.Ctftime.Team do
   end
 
   def description_from_html(doc) do
+    IO.inspect(Floki.find(doc, ".container .row .span12 .well"))
     case Floki.find(doc, ".container .row .span12 .well") do
       [{"div", _, content}] ->
         content

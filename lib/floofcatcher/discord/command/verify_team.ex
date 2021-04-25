@@ -47,8 +47,12 @@ defmodule Floofcatcher.Discord.Command.VerifyTeam do
   end
 
   def command(msg, ["check"]) do
-    GuildVerification.check_verification(msg.guild_id)
-    {:ok, _msg} = Api.create_message(msg.channel_id, "#TODO: Check")
+    case GuildVerification.check_verification(msg.guild_id) do
+      {:ok, _} ->
+        Api.create_message(msg.channel_id, "Congrats! You've been verified")
+      {:error, reason} ->
+        Api.create_message(msg.channel_id, "Verification failed. Reason: #{reason}")
+    end
   end
 
   def command(msg, _args) do

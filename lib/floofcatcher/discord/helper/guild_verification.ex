@@ -6,7 +6,8 @@ defmodule Floofcatcher.Discord.Helper.GuildVerification do
     Repo,
     DiscordGuild,
     DiscordGuildVerification,
-    Team
+    Team,
+    Ctftime
   }
 
   def begin_verification(guild_id, team_id) do
@@ -28,11 +29,15 @@ defmodule Floofcatcher.Discord.Helper.GuildVerification do
   @spec check_verification(integer) :: {:ok, %Team{}} | {:error, String.t()}
   def check_verification(guild_id) do
     with  {:ok, guild} <- get_guild(guild_id),
-          {:ok, team} <- update_team(guild.team.remote_id)
+          {:ok, team} <- update_team_description(guild.team),
+          {:ok, _} <- check_verification(guild, team),
+          {:ok, _} <- set_verification(guild)
     do
-      {:error, "woops"}
+      {:ok, "verification checks out"}
     else
-      _ -> {:error, "verification failed"}
+      reason ->
+        IO.inspect(reason)
+        {:error, "verification failed"}
     end
   end
 
@@ -73,8 +78,6 @@ defmodule Floofcatcher.Discord.Helper.GuildVerification do
       false ->
         case is_nil(guild.team_id) do
           true ->
-            IO.inspect(guild)
-            IO.inspect(team)
             DiscordGuild.changeset(guild, %{})
             |> Ecto.Changeset.put_assoc(:team, team)
             |> Repo.update!()
@@ -94,17 +97,46 @@ defmodule Floofcatcher.Discord.Helper.GuildVerification do
     end
   end
 
-  @spec update_team(integer) :: {:ok, Team.__struct__} | {:error, String.t()}
-  defp update_team(team_id) do
-    IO.inspect(team_id)
-    {:error, "not implemented"}
+  # TODO: Errors
+  @spec update_team_description(Team.__struct__) :: {:ok, Team.__struct__} #| {:error, String.t()}
+  defp update_team_description(team) do
+    {:ok, updated} = Ctftime.Api.get_team(Integer.to_string(team.remote_id))
+    {:ok, team} = Team.changeset(team, %{description: updated.description}) |> Repo.update()
+
+    {:ok, team}
+  end
+
+  @spec check_verification(DiscordGuild.__struct__, Team.__struct__) :: {:ok, String.t()} | {:error, String.t()}
+  defp check_verification(guild, team) do
+    if guild.team_id != team.id do
+      {:error, "guild doesn't belong to team"}
+    end
+
+    guild = Repo.preload(guild, :discord_guild_verification)
+    case guild.discord_guild_verification do
+      nil ->
+        {:error, "verification process not started"}
+      _ ->
+        if String.contains?(team.description, "Floofcatcher: " <> guild.discord_guild_verification.code) do
+          {:ok, "verified"}
+        else
+          {:error, "code mismatch"}
+        end
+    end
+  end
+
+  @spec set_verification(DiscordGuild.__struct__) :: {:ok, DiscordGuild.__struct__} | {:error, DiscordGuild.__changeset__}
+  defp set_verification(guild) do
+    DiscordGuild.changeset(guild, %{verified: true})
+    |> Repo.update()
   end
 
   defp create_team(team_id) do
-    with  {:ok, team} <- Floofcatcher.Ctftime.Api.get_team(team_id),
+    with  {:ok, team} <- Ctftime.Api.get_team(team_id),
           {:ok, team_db} <- Repo.insert(%Team{
             remote_id: team.id,
             name: team.name,
+            description: team.description,
             logo: team.logo,
             country: team.country,
             academic: team.academic
