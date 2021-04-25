@@ -5,7 +5,9 @@ defmodule Floofcatcher.Ctftime.Team do
     :description,
     :country,
     :academic,
-    :logo
+    :logo,
+    :rating,
+    :url
   ]
 
   @type t :: %__MODULE__{
@@ -14,7 +16,9 @@ defmodule Floofcatcher.Ctftime.Team do
     description: String.t() | nil,
     country: String.t() | nil,
     academic: boolean,
-    logo: String.t() | nil
+    logo: String.t() | nil,
+    rating: integer,
+    url: String.t()
   }
 
   # {"img", [{"src", "/static/images/f/se.png"}, {"alt", "SE"}], []},
@@ -32,7 +36,6 @@ defmodule Floofcatcher.Ctftime.Team do
   end
 
   def description_from_html(doc) do
-    IO.inspect(Floki.find(doc, ".container .row .span12 .well"))
     case Floki.find(doc, ".container .row .span12 .well") do
       [{"div", _, content}] ->
         content
@@ -62,6 +65,17 @@ defmodule Floofcatcher.Ctftime.Team do
       [{"h2", _, [
         name
       ]}] -> {String.trim(name), nil}
+    end
+  end
+
+  def rating_from_html(doc) do
+    case Floki.find(doc, ".container .tab-content #rating_2021 p b") do
+      [{"b", _, [content]}, _, _] ->
+        content
+        |> String.trim()
+        |> String.to_integer()
+      _ ->
+        nil
     end
   end
 end
