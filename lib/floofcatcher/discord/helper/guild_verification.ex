@@ -113,15 +113,15 @@ defmodule Floofcatcher.Discord.Helper.GuildVerification do
     end
 
     guild = Repo.preload(guild, :discord_guild_verification)
-    case guild.discord_guild_verification do
-      nil ->
-        {:error, "verification process not started"}
-      _ ->
+    case is_nil(guild.discord_guild_verification) do
+      false ->
         if String.contains?(team.description, "Floofcatcher: " <> guild.discord_guild_verification.code) do
           {:ok, "verified"}
         else
           {:error, "code mismatch"}
         end
+      true ->
+        {:error, "verification process not started"}
     end
   end
 
