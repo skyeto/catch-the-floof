@@ -70,7 +70,7 @@ defmodule Floofcatcher.Ctftime.Team do
 
   def rating_from_html(doc) do
     case Floki.find(doc, ".container .tab-content #rating_2021 p b") do
-      [{"b", _, [content]}, _, _] ->
+      [{"b", _, [content]} | _] ->
         content
         |> String.trim()
         |> String.to_integer()
