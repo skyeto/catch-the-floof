@@ -35,10 +35,10 @@ defmodule Floofcatcher.Discord.Helper.GuildInitialization do
 
   defp guild_get_or_create(guild_id) do
     case Repo.get_by(DiscordGuild, snowflake: Integer.to_string(guild_id)) do
-      guild_db = %DiscordGuild{} ->
-        %{id: guild_id, db: guild_db}
       nil ->
         create_new_guild(%{id: guild_id})
+      guild_db = %DiscordGuild{} ->
+        %{id: guild_id, db: guild_db}
     end
   end
 
@@ -119,7 +119,13 @@ defmodule Floofcatcher.Discord.Helper.GuildInitialization do
   defp set_initialized(guild) do
     case ~~~guild do
       {:ok, _} ->
-        # TODO: Add guild initialized flag?
+        changeset = DiscordGuild.changeset(guild.db, %{
+          category: guild.category.id,
+          bot_commands: guild.channel.id, #TODO: Change!
+          voice_creator: guild.voice.id
+        })
+        Repo.update!(changeset)
+
         Logger.info("Successfully initialized guild #{guild.id}")
       {:error, reason} ->
         # TODO: Better error handling
