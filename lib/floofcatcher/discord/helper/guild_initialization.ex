@@ -18,6 +18,9 @@ defmodule Floofcatcher.Discord.Helper.GuildInitialization do
   the OAuth2 provider the verification is a bit more involved but \
   still super quick!
 
+  **Why?**
+  Since this bot is hosted it's nice to know who's who :)
+
   **How?**
   >> Send `/verify start [team id]` in this channel
   >> Add the code returned by the command to your team description
