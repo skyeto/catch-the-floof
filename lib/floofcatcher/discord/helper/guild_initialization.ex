@@ -27,7 +27,9 @@ defmodule Floofcatcher.Discord.Helper.GuildInitialization do
   def initialize(guild_id) do
     guild_get_or_create(guild_id)
     ~> create_roles()
-    ~> create_channels()
+    ~> create_category()
+    ~> create_text_channels()
+    ~> create_voice_channels()
     |> set_initialized()
   end
 
@@ -49,12 +51,28 @@ defmodule Floofcatcher.Discord.Helper.GuildInitialization do
     end
   end
 
-  defp create_channels(guild) do
+  defp create_category(guild) do
     case Nostrum.Api.get_guild_channels(guild.id) do
       {:ok, channels} ->
-        case Enum.find(channels, fn channel -> String.equivalent?(channel.name, "floofcatcher") end) do
+        case Enum.find(channels, fn channel -> String.equivalent?(channel.name, "floofcatcher") and channel.type == 4 end) do
           nil ->
-            {:ok, channel} = Nostrum.Api.create_guild_channel(guild.id, name: "floofcatcher")
+            {:ok, category} = Nostrum.Api.create_guild_channel(guild.id, name: "floofcatcher", type: 4)
+
+            Map.put(guild, :category, category)
+          category ->
+            Map.put(guild, :category, category)
+        end
+      {:error, error} ->
+        error
+    end
+  end
+
+  defp create_text_channels(guild) do
+    case Nostrum.Api.get_guild_channels(guild.id) do
+      {:ok, channels} ->
+        case Enum.find(channels, fn channel -> String.equivalent?(channel.name, "status") and channel.type == 0 end) do
+          nil ->
+            {:ok, channel} = Nostrum.Api.create_guild_channel(guild.id, name: "status", parent_id: guild.category.id)
 
             guild
             |> Map.put(:channel, channel)
@@ -64,6 +82,20 @@ defmodule Floofcatcher.Discord.Helper.GuildInitialization do
         end
       {:error, error} ->
         error
+    end
+  end
+
+  defp create_voice_channels(guild) do
+    case Nostrum.Api.get_guild_channels(guild.id) do
+      {:ok, channels} ->
+        case Enum.find(channels, fn channel -> String.equivalent?(channel.name, "Create new room") and channel.type == 2 end) do
+          nil ->
+            {:ok, channel} = Nostrum.Api.create_guild_channel(guild.id, name: "Create new room", type: 2, parent_id: guild.category.id)
+
+            Map.put(guild, :voice, channel)
+          channel ->
+            Map.put(guild, :voice, channel)
+        end
     end
   end
 

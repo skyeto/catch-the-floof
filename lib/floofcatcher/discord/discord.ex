@@ -9,7 +9,8 @@ defmodule Floofcatcher.Discord do
   alias Floofcatcher.Discord.Command
   alias Floofcatcher.Discord.Handler.{
     MessageCreate,
-    Ready
+    Ready,
+    VoiceStateUpdate
   }
 
   def start_link do
@@ -24,6 +25,10 @@ defmodule Floofcatcher.Discord do
   def handle_event({:MESSAGE_CREATE, msg, _ws_state}) do
     MessageCreate.handle(msg)
     Logger.debug("Received message: " <> msg.content)
+  end
+
+  def handle_event({:VOICE_STATE_UPDATE, state, _ws_state}) do
+    VoiceStateUpdate.handle(state)
   end
 
   def handle_event({:INTERACTION_CREATE, payload, _ws_state}) do

@@ -35,8 +35,9 @@ defmodule Floofcatcher.Discord.Command.TeamInfo do
     end
   end
 
+  @spec register :: :ok
   def register() do
-    IO.puts("TODO: Initialize test command")
+    :ok
   end
 
   @spec get_team_embed(Nostrum.Struct.Message.__struct__) :: {:ok, Nostrum.Struct.Embed.__struct__} | {:error, String.t()}
