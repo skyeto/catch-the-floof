@@ -19,7 +19,7 @@ defmodule Floofcatcher.Discord.Helper.GuildInitialization do
   still super quick!
 
   **Why?**
-  Since this bot is hosted it's nice to know who's who :)
+  Since this bot is hosted for free it's nice to know who's who :)
 
   **How?**
   >> Send `/verify start [team id]` in this channel
@@ -107,6 +107,7 @@ defmodule Floofcatcher.Discord.Helper.GuildInitialization do
   end
 
   defp send_introduction(guild) do
+    IO.inspect(guild)
     if guild.db.verified == false do
       embed =
         %Nostrum.Struct.Embed{}

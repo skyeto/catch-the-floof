@@ -8,6 +8,8 @@ defmodule Floofcatcher.Ctftime.Api do
     Event
   }
 
+  @doc "Fetches team with id from CTFtime"
+  @spec get_team(String.t) :: {:ok, Floofcatcher.Ctftime.Team.t} | {:error, String.t}
   def get_team(id) do
     # TODO: We can't use the API endpoint since it doesn't return
     # the description. :(
@@ -29,12 +31,15 @@ defmodule Floofcatcher.Ctftime.Api do
     end
   end
 
+  @doc "Fetches event with id from CTFtime"
+  @spec get_event(String.t) :: {:ok, Floofcatcher.Ctftime.Event.t} | {:error, String.t}
   def get_event(id) do
     with  {:ok, body} <- get_request(@ctftime_api, ["events", id, ""]),
           {:ok, event} <- Jason.decode(body)
     do
       {:ok, %Event{
-        ctf_id: event["id"],
+        id: event["id"],
+        ctf_id: event["ctf_id"],
         title: event["title"],
         url: event["url"],
         restrictions: event["restrictions"],

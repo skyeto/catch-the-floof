@@ -15,13 +15,16 @@ defmodule Floofcatcher.Discord.Command.JoinEvent do
     {:ok, _msg} = Nostrum.Api.create_message(msg.channel_id, response)
   end
 
-  def command(msg, event) do
-    response = "Joining event #{event}"
+  @spec command(Nostrum.Struct.Message.__struct__, String.t) :: any
+  def command(msg, event_id) do
+    response = "Joining event #{event_id}"
     # TODO: Create permissions
     # TODO: Get event from CTFtime
     # TODO: Send initial message
     # TODO: Add event to database
-    {:ok, channel_category} = Nostrum.Api.create_guild_channel(msg.guild_id, name: "event-#{event}-2021", type: 4)
+    {:ok, event} = Floofcatcher.Discord.Helper.Event.get_or_create_event(String.to_integer(event_id))
+
+    {:ok, channel_category} = Nostrum.Api.create_guild_channel(msg.guild_id, name: "event-#{event.title}", type: 4)
     {:ok, channel} = Nostrum.Api.create_guild_channel(msg.guild_id, name: "general", parent_id: channel_category.id)
 
     message =
@@ -34,6 +37,6 @@ defmodule Floofcatcher.Discord.Command.JoinEvent do
   end
 
   def register() do
-
+    :ok
   end
 end
