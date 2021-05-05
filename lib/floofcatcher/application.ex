@@ -15,8 +15,6 @@ defmodule Floofcatcher.Application do
       {Phoenix.PubSub, name: Floofcatcher.PubSub},
       # Start the Endpoint (http/https)
       FloofcatcherWeb.Endpoint,
-      # Start a worker by calling: Floofcatcher.Worker.start_link(arg)
-      # {Floofcatcher.Worker, arg}
       Nosedrum.Storage.ETS,
       Floofcatcher.Discord
     ]

@@ -20,7 +20,7 @@ defmodule Floofcatcher.MixProject do
   def application do
     [
       mod: {Floofcatcher.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :httpoison]
     ]
   end
 
@@ -51,7 +51,17 @@ defmodule Floofcatcher.MixProject do
 
       # Discord
       {:nostrum, "~> 0.4.6"},
-      {:nosedrum, "~> 0.3.0"}
+      {:nosedrum, "~> 0.3.0"},
+
+      # HTTP Requests
+      {:httpoison, "~> 1.8"},
+      {:floki, "~> 0.30.1"},
+
+      # GraphQL (for CTFNote)
+      {:neuron, "~> 5.0"},
+
+      # Helpers
+      {:exceptional, "~> 2.1"}
     ]
   end
 

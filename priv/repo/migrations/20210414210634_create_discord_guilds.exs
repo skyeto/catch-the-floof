@@ -6,6 +6,10 @@ defmodule Floofcatcher.Repo.Migrations.CreateDiscordGuilds do
       add :snowflake, :string
       add :verified, :boolean, default: false, null: false
 
+      add :category, :bigint
+      add :bot_commands, :bigint
+      add :voice_creator, :bigint
+
       timestamps()
     end
 
